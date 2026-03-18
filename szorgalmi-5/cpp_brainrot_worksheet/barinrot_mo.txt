@@ -1,0 +1,68 @@
+==============================
+Exercise 1 – Kódrészlet azonosítás
+==============================
+
+int x = 10;                 -> Változó Vlad
+int* p = &x;                -> Pointer Pete
+void f(int x) { x=99; }     -> Xerox Chad
+void f(int& x) { x=99; }    -> Key Dealer Kevin
+int* p = nullptr;           -> Null Nick
+{ int n=5; } // n meghal    -> Scope Sensei
+template<T> T add(T a, T b) -> Generic Greg
+return n * f(n-1);          -> Recursion Rick
+
+==============================
+Exercise 2 – Hiányzó részek
+==============================
+
+// a) Xerox Chad – érték szerinti átadás
+int chad = 5;
+valtoztat(chad);
+// chad értéke még mindig: 5
+
+// b) Pointer Pete – dereferencelés
+int ertek = 55;
+int* pete = &ertek;
+*pete = 77;
+printf("%d", ertek); // kimenet: 77
+
+// c) Recursion Rick – base case
+int osszeg(int n) {
+    if (n == 0) return 0; // base case
+    return n + osszeg(n-1);
+}
+// osszeg(4) = 4+3+2+1+0 = 10
+
+==============================
+Exercise 3 – Boss karakterek
+==============================
+
+// a) Mi a baj?
+int* p = nullptr;
+printf("%d", *p);
+// -> Segfault Samu (Null Nick dereferencelése)
+
+// b) Mi a baj?
+int* p = (int*)malloc(sizeof(int));
+*p = 42;
+// … free() soha nem hívódik
+// -> Memory Leak Miki
+
+// c) Mi a baj?
+int vegtelen(int n) {
+    return vegtelen(n); // base case hiányzik
+}
+// -> Stack Overflow Stan
+
+==============================
+Exercise 4 – Saját Brainrot karakter
+==============================
+
+Név: Heap Harriet
+Fogalom: Dinamikus memória (malloc)
+Személyiség: Mindig kész új dolgokat létrehozni, de hajlamos elfelejteni felszabadítani őket.
+Idézet: "Ha létrehozok, létezik. Ha elfelejtesz free-elni… én maradok."
+Kódpélda:
+int* ptr = (int*)malloc(sizeof(int));
+*ptr = 123;
+// free(ptr); // Ha elfelejted -> Memory Leak Miki
