@@ -1,0 +1,127 @@
+==============================
+Exercise 1 – Kódrészlet azonosítás
+==============================
+
+class Kutya { ... };                        -> Osztály Olga
+Kutya k("Rex");                             -> Példányosító Pál / Objektum Oszkár
+Kutya(string n) { nev=n; }                 -> Konstruktor Kristóf
+~Kutya() { delete adat; }                  -> Destruktor Dezső
+class Kutya : public Allat                  -> Öröklődő Olivér
+virtual void hangotAd() = 0;               -> Absztrakt Anikó / Interfész István
+void f() override { ... }                  -> Polimorf Péter
+private: int egyenleg;                      -> Bezáró Bence
+Allat* a = new Kutya(); a->hangotAd();     -> Late Binding Lajos / Polimorf Péter
+
+==============================
+Exercise 2 – Hiányzó részek
+==============================
+
+// a) Konstruktor Kristóf + Destruktor Dezső
+class Auto {
+public:
+    std::string marka;
+    int* ev;
+
+    // konstruktor:
+    Auto(std::string m) {
+        marka = m;
+        ev = new int(2024);
+    }
+
+    // destruktor:
+    ~Auto() {
+        delete ev;
+    }
+};
+
+// b) Bezáró Bence – hozzáférési módosítók
+class BankSzamla {
+    int egyenleg = 0;       // Belülről látszik, kívülről nem → private
+    int hitelkeret = 50000; // Leszármazott is látja, kívülső nem → protected
+    void befizet(int x);    // Mindenki hívhatja → public
+};
+
+// c) Polimorf Péter – kimenet
+Allat* allatok[] = { new Kutya(), new Macska(), new Kutya() };
+for (auto* a : allatok) a->hangotAd();
+// Kimenetek sorban: "Vau!" , "Miau!" , "Vau!"
+
+==============================
+Exercise 3 – Absztrakt Anikó vs Interfész István
+==============================
+
+// X osztály:
+class X {
+public:
+    virtual void mozog() = 0;
+    virtual void megall() = 0;
+    virtual ~X() = default;
+};
+
+// Y osztály:
+class Y {
+public:
+    virtual void mozog() = 0;
+    void legzik() { /* van impl. */ }
+    int energia = 100;
+};
+
+X = Interfész István  mert: csak pure virtual metódusai vannak, semmi implementáció vagy adattag.
+Y = Absztrakt Anikó   mert: van legalább egy pure virtual (mozog()), DE van konkrét metódus (legzik()) és adattag (energia) is.
+
+==============================
+Exercise 4 – Early Eddie vs Late Binding Lajos
+==============================
+
+Kutya k; k.ugat();  (ugat nem virtual)                         → EARLY
+Allat* a = new Kutya(); a->hangotAd();  (virtual)               → LATE
+osszeAdd<int>(3,4);  (template)                                  → EARLY
+Függvény overloading (f(int) vs f(double))                      → EARLY
+virtual void f() = 0;  leszármazotton hívva                     → LATE
+
+==============================
+Exercise 5 – Mini osztályhierarchia (3 szint)
+==============================
+
+// Szint 1 – absztrakt alap (Absztrakt Anikó + Interfész István)
+class Jarmu {                          // ABSZTRAKT
+public:
+    virtual void mozog() = 0;          // pure virtual → kötelező leszármazottnak
+    virtual ~Jarmu() = default;
+protected:
+    int max_sebesseg;                  // leszármazott látja, kívülső nem (Bezáró Bence)
+};
+
+// Szint 2 – részleges megvalósítás (Öröklődő Olivér)
+class Motoros : public Jarmu {         // IS-A Jarmu
+public:
+    void beindít();                    // saját konkrét metódus
+    virtual void tankol() = 0;         // még mindig absztrakt → Motoros is absztrakt
+protected:
+    int hengerszam;
+};
+
+// Szint 3 – konkrét osztály (Objektum Oszkár megszülhet belőle)
+class Auto : public Motoros {          // IS-A Motoros IS-A Jarmu
+public:
+    Auto(int seb) {                    // Konstruktor Kristóf
+        max_sebesseg = seb;
+    }
+    ~Auto() { /* erőforrás-felszabadítás → Destruktor Dezső */ }
+
+    void mozog() override { }          // Polimorf Péter – felülírja Jarmu::mozog()
+    void tankol() override { }         // kötelező, mert Motoros előírta
+
+private:
+    std::string rendszam;              // csak Auto látja (Bezáró Bence)
+};
+
+// Példányosítás (Példányosító Pál):
+Jarmu* j = new Auto(200);             // Late Binding Lajos dönt futáskor
+j->mozog();
+delete j;                             // Destruktor Dezső fut
+
+// Összefoglalás:
+// Jarmu   → absztrakt, 1 pure virtual, protected adattag
+// Motoros → absztrakt, örököl + újabb pure virtual, protected adattag
+// Auto    → konkrét, mindent megvalósít, private adattag, konstruktor + destruktor
