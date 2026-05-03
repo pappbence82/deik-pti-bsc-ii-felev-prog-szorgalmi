@@ -1,0 +1,98 @@
+==============================
+Exercise 1 – Fogalomfelismerés (Kódrészlet → Karakter párosítás)
+==============================
+
+\x -> x * 2                                    -> λ-kalkulusos Lali / Lambda Lali
+f . g  (pont operátor)                         -> Függvényösszetétel Fanni
+add 5  (csak egy param, visszaad fnv-t)        -> Curry Csaba
+map f xs, filter p xs                          -> Higher-Order Hugó
+foldl (+) 0 [1,2,3]                            -> Fold Frida
+f [] = 0  /  f (x:xs) = ...                    -> Mintaillesztő Miska / Rekurzív Rita
+take 10 [1..]  (végtelen lista)                -> Lusta László
+Ugyanarra a bemenetre mindig ugyanaz           -> Tiszta Tivadar
+A kifejezés értéke nem függ helyétől           -> Hivatkozási Hanna
+Az érték, amiből már nem lehet redukálni       -> Normál Forma Norbert
+
+==============================
+Exercise 2 – Redukciós lépések (Redukciós Réka)
+==============================
+
+// a) β-redukciók lépésről lépésre:
+(\x -> x + x) 5
+-- 1. lépés (β): 5 + 5          (x helyére 5 kerül)
+-- 2. lépés:     10             (aritmetikai kiértékelés)
+-- Normál forma: 10
+
+// b) Normál formák:
+(a) 2 + 3 * 4       → normál forma: 14
+(b) map (*2) [1,2]  → normál forma: [2,4]
+(c) let x = x in x → normál forma: NINCS  (indok: körkörös definíció, végtelen rekurzió)
+
+==============================
+Exercise 3 – Tail-rekurzió vs sima rekurzió
+==============================
+
+// A:
+szorzat []     = 1
+szorzat (x:xs) = x * szorzat xs
+-- Tail? NEM-TAIL
+-- Miért? A szorzás megvárja a rekurzív hívás visszatérési értékét (x * __).
+
+// B:
+szorzatT [] acc     = acc
+szorzatT (x:xs) acc = szorzatT xs (x * acc)
+-- Tail? TAIL
+-- Miért? A rekurzív hívás az utolsó dolog — akkumulátor viszi az állapotot.
+
+// C: tail-recursive verzió:
+osszegT [] acc     = acc
+osszegT (x:xs) acc = osszegT xs (x + acc)
+
+-- Hívás: osszegT [1,2,3] 0  →  6
+
+==============================
+Exercise 4 – Curry Csaba és függvényösszetétel
+==============================
+
+// a) Curry:
+add x y = x + y
+
+add3     = add 3            -- típusa: Int -> Int
+add3 7                      -- → 10
+map (add 10) [1,2,3]        -- → [11,12,13]
+
+// b) Függvényösszetétel:
+duplaPlusz1 = (+1) . (*2)
+
+duplaPlusz1 4  -- lépések: 4 *2 = 8, +1 = 9  → eredmény: 9
+
+-- (1) megszorozza 3-mal, (2) kivon belőle 1-et, (3) négyzetre emeli:
+kombinalt = (^2) . (subtract 1) . (*3)
+kombinalt 5  -- lépések: 5*3=15, 15-1=14, 14^2=196  → 196
+
+==============================
+Exercise 5 – Lusta László vs Mohó Mónika
+==============================
+
+take 5 [1..]       — végtelen lista első 5 eleme      → LUSTA (Mohó lefagy)
+sum [1..100]       — véges lista összege              → MINDKETTŐ
+Fibonacci sorozat végtelen listája                    → LUSTA (Mohó lefagy)
+Ha egy argumentumot soha nem használunk fel           → LUSTA (Mohó is kiszámolja feleslegesen)
+
+==============================
+Exercise 6 – Saját Brainrot Karakter (Bonus)
+==============================
+
+Név:        Maybe Margit
+Fogalom:    Maybe típus — biztonságos érték, ami lehet Just x vagy Nothing
+Személyiség: Margit sosem ígér biztosat. Mindig ott van a lehetőség, hogy semmit sem ad vissza —
+             de legalább nem dob kivételt. Optimista nihilista.
+Idézet:     "Lehet, hogy van. Lehet, hogy nincs. De legalább nem crashelek."
+Kódpélda:
+  osztDa :: Int -> Int -> Maybe Int
+  osztDa _ 0 = Nothing
+  osztDa a b = Just (a `div` b)
+
+  osztDa 10 2   -- → Just 5
+  osztDa 10 0   -- → Nothing  (nem Exception!)
+
